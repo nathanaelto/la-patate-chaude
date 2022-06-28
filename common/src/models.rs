@@ -24,6 +24,9 @@ pub struct Subscribe {
     name: String,
 }
 
+pub struct Hello {
+}
+
 pub enum SubscribeResult {
     Ok,
     Err(SubscribeError),

@@ -11,6 +11,10 @@ fn main() {
     let subscribe_error = SubscribeError::InvalidName;
     let serialized_error = serde_json::to_string(&subscribe_error).unwrap();
 
+    // Lancer server
+    //Ajouter les clients
+    //Lancer server_start (= start game)
+
     //phrase à trouver : il fait froid
     let input = RecoverSecretInput{
         letters: String::from("lffiiilfatroridato"),
