@@ -27,6 +27,10 @@ pub struct Subscribe {
 pub struct Hello {
 }
 
+pub struct Welcome {
+    version: u8
+}
+
 pub enum SubscribeResult {
     Ok,
     Err(SubscribeError),
