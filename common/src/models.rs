@@ -31,6 +31,12 @@ pub struct Welcome {
     version: u8
 }
 
+#[derive(Serialize)]
+pub struct JsonMessage {
+    pub size: u32,
+    pub message: str
+}
+
 pub enum SubscribeResult {
     Ok,
     Err(SubscribeError),
