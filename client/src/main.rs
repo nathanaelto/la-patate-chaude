@@ -1,48 +1,19 @@
 mod recover_secret;
 
-use std::io::Read;
-use std::net::{SocketAddr, TcpListener};
-use common::challenge::Challenge;
-use common::models;
-use common::models::SubscribeError;
-use crate::recover_secret::recover_secret::{RecoverSecret, RecoverSecretInput};
+use std::io::{BufWriter, Write};
+use std::net::TcpStream;
 
+//TODO à compléter/améliorer
 fn main() {
-    let subscribe_error = SubscribeError::InvalidName;
-    let serialized_error = serde_json::to_string(&subscribe_error).unwrap();
+    println!("Hello");
+    let stream = TcpStream::connect("localhost:7878");
 
-    // Lancer server
-    //Ajouter les clients
-    //Lancer server_start (= start game)
-
-    //phrase à trouver : il fait froid
-    let input = RecoverSecretInput{
-        letters: String::from("lffiiilfatroridato"),
-        tuple_sizes: Vec::from([3,3,3,3,3,3])
-    };
-
-    let challenge = RecoverSecret::new(input);
-
-    println!("{}", serialized_error);
-
-    //TODO déplacer dans un fichier
-    //Server
-    let addr: SocketAddr = SocketAddr::from(([127,0,0,1], 7676));
-    let x = TcpListener::bind(addr);
+    let mut listener = match stream {
     // let listener = x.unwrap(); // mode 'bourrain'
-
-    let listener = match x {
         Ok(res) => res,
-        Err(err) => panic!("Cannot listen on port : {err:?}")
+        Err(err) => panic!("Cannot connect: {err}")
     };
+    let message = "Hello".as_bytes();
 
-    for message in listener.incoming() {
-        println!("message entrant: {message:?}");
-        let mut decoded = message.unwrap();
-        let mut v = Vec::<u8>::new();
-        decoded.read_to_end(&mut v).unwrap();
-
-        let str = String::from_utf8_lossy(&v);
-        println!("{str:?}");
-    }
+    let x = listener.write(message);
 }
