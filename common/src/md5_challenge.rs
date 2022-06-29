@@ -42,14 +42,32 @@ impl Challenge for MD5HashCash {
 
         // Askip c'est le nombre de bit à 0 en partant de la gauche qu'il faut compter.
         let &message = self.input.message;
-        let mut seed = "0000000000000000";
-        let hashcode  = md5::compute(seed+message);
-        let mut nbBytesTo0 = 0;
+        //entier de 64 bits
+        let mut seed: u64 = 0;
+        let mut found = false;
 
-        // echo -n "000000000000034Chello" | md5sum | tr a-z A-Z
-        // compter le nombre de 0 en partant de la gauche + 1er char non 0
-        // Convertir en nb bytes à 0
-        // Comparer à complexity
+        while !found {
+            //formater seed pour qu'il soit en hexa sur 32: println!("{:#01x}", seed);
+            let hashcode  = md5::compute(seed+message);
+            let mut nbBytesTo0 = 0;
+            for &letter in hashcode {
+                let nbZero = checker(letter); //tester lettre avec checker
+                nbBytesTo0 += nbZero;
+
+                if nbZero < 4 {
+                    break;
+                }
+            }
+
+            if nbBytesTo0 >= self.input.complexity {
+                return MD5HashCashOutput {
+                    seed,
+                    hashcode: String::from(hashcode)
+                };
+            }
+
+            seed +=1;
+        }
         return *self.output
     }
 
