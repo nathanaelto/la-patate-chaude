@@ -1,5 +1,3 @@
-
-
 use std::io::Read;
 use std::net::{SocketAddr, TcpListener};
 use common::challenge::Challenge;
