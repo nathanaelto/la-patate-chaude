@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
-struct Md5Checker {
-    map: HashMap<String, u8>,
+pub struct Md5Checker {
+    map: HashMap<String, u32>,
 }
 
 impl Md5Checker {
     pub fn new() -> Md5Checker {
-        let map: HashMap<String, u8> = HashMap::from([
+        let map: HashMap<String, u32> = HashMap::from([
             (String::from("0"), 4),
             (String::from("1"), 3),
             (String::from("2"), 2),
@@ -29,7 +29,7 @@ impl Md5Checker {
         }
     }
 
-    fn get_bits_to_zero(&self, key: String) -> u8 {
+    pub fn get_bits_to_zero(&self, key: String) -> u32 {
         *self.map.get(&key).unwrap()
     }
 }

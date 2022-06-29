@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use md5::*;
 use std::io;
 use crate::challenge::Challenge;
+use crate::md5_checker::Md5Checker;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MD5HashCashInput {
@@ -42,6 +43,9 @@ impl Challenge for MD5HashCash {
 
         // Askip c'est le nombre de bit à 0 en partant de la gauche qu'il faut compter.
         let &message = self.input.message;
+        let mut checker : Md5Checker = Md5Checker::new();
+
+
         //entier de 64 bits
         let mut seed: u64 = 0;
         let mut found = false;
@@ -51,7 +55,7 @@ impl Challenge for MD5HashCash {
             let hashcode  = md5::compute(seed+message);
             let mut nbBytesTo0 = 0;
             for &letter in hashcode {
-                let nbZero = checker(letter); //tester lettre avec checker
+                let nbZero: u32 = checker.get_bits_to_zero(letter) ; //tester lettre avec checker
                 nbBytesTo0 += nbZero;
 
                 if nbZero < 4 {
