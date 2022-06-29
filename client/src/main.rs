@@ -55,6 +55,9 @@ impl TcpClient {
 
 
 fn main() {
+
+    let player = std::env::args().nth(1).unwrap();
+
     let mut tcp_client = TcpClient::new();
 
     println!("-- Hello --");
@@ -64,7 +67,7 @@ fn main() {
 
     println!("-- Subscribe --");
 
-    let name = String::from("Natha");
+    let name = String::from(player);
     let subscribe = JsonMessage::Subscribe(Subscribe {name});
     let subscribe_response: JsonMessage = tcp_client.sendJsonMessage(&subscribe);
     println!("{:?}", subscribe_response);
@@ -72,5 +75,10 @@ fn main() {
     println!("-- Await PlayerBoard --");
     let board : JsonMessage = tcp_client.waiting_message();
     println!("{:?}", board);
+
+    println!("-- Await Challenge or RoundSummary --");
+    let challenge : JsonMessage = tcp_client.waiting_message();
+    println!("{:?}", challenge);
+
 
 }

@@ -21,6 +21,8 @@ pub enum JsonMessage {
     Subscribe(Subscribe),
     SubscribeResult(SubscribeResult),
     PublicLeaderBoard(Vec<PublicPlayer>),
+    Challenge(Challenge),
+    RoundSummary(RoundSummary),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -45,23 +47,28 @@ pub struct PublicPlayer {
     pub total_used_time: f64,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct PublicLeaderBoard {
     pub public_leader_board: Vec<PublicPlayer>,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub enum Challenge {
     MD5HashCash(MD5HashCashInput),
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub enum ChallengeAnswer {
     MD5HashCash(MD5HashCashOutput),
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ChallengeResult {
     pub answer: ChallengeAnswer,
     pub next_target: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub enum ChallengeValue {
     Unreachable,
     Timeout,
@@ -69,11 +76,13 @@ pub enum ChallengeValue {
     Ok { used_time: f64, next_target: String },
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ReportedChallengeResult {
     pub name: String,
     pub value: ChallengeValue,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct RoundSummary {
     pub challenge: String,
     pub chain: Vec<ReportedChallengeResult>,
