@@ -23,6 +23,7 @@ pub enum JsonMessage {
     PublicLeaderBoard(Vec<PublicPlayer>),
     Challenge(Challenge),
     RoundSummary(RoundSummary),
+    EndOfGame(EndOfGame),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -86,4 +87,9 @@ pub struct ReportedChallengeResult {
 pub struct RoundSummary {
     pub challenge: String,
     pub chain: Vec<ReportedChallengeResult>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct EndOfGame {
+    leader_board: PublicLeaderBoard,
 }

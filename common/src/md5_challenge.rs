@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use md5::*;
+use md5::compute;
 use std::io;
 use crate::challenge::Challenge;
 use crate::md5_checker::Md5Checker;
@@ -42,7 +42,7 @@ impl Challenge for MD5HashCash {
         // Avec hashcode comprenant X bits à 0 où X supérieur ou égal à complexity.
 
         // Askip c'est le nombre de bit à 0 en partant de la gauche qu'il faut compter.
-        let &message = self.input.message;
+        let message = self.input.message.clone();
         let mut checker : Md5Checker = Md5Checker::new();
 
 
@@ -52,18 +52,20 @@ impl Challenge for MD5HashCash {
 
         while !found {
             //formater seed pour qu'il soit en hexa sur 32: println!("{:#01x}", seed);
-            let hashcode  = md5::compute(seed+message);
-            let mut nbBytesTo0 = 0;
-            for &letter in hashcode {
-                let nbZero: u32 = checker.get_bits_to_zero(letter) ; //tester lettre avec checker
-                nbBytesTo0 += nbZero;
+            let seed_str = format!("{:016X}", seed);
+            let hashcode  = compute(seed_str + &message);
+            let md5 = format!("{:032X}", hashcode);
+            let mut nb_bytes_to0 = 0;
+            for letter in md5.chars() {
+                let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
+                nb_bytes_to0 += nb_zero;
 
-                if nbZero < 4 {
+                if nb_zero < 4 {
                     break;
                 }
             }
 
-            if nbBytesTo0 >= self.input.complexity {
+            if nb_bytes_to0 >= self.input.complexity {
                 return MD5HashCashOutput {
                     seed,
                     hashcode: String::from(hashcode)

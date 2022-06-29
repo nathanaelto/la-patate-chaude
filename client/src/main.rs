@@ -1,12 +1,15 @@
 extern crate core;
+extern crate core;
 
 mod recover_secret;
 
+use core::panicking::panic;
 use std::io::{Read, Write};
 use std::net::TcpStream;
 use std::thread::sleep;
 use std::time;
-use common::models::{JsonMessage, Subscribe};
+use common::models::{Challenge, JsonMessage, Subscribe};
+use common::models::JsonMessage::Challenge;
 
 struct TcpClient {
     stream: TcpStream,
@@ -78,6 +81,27 @@ fn main() {
 
     println!("-- Await Challenge or RoundSummary --");
     let challenge : JsonMessage = tcp_client.waiting_message();
+    let mut run = true;
+    while &run {
+        match &challenge {
+            Challenge(c) => {
+                match &c {
+                    Challenge::MD5HashCash(i) => {
+
+                    }
+                }
+            }
+            JsonMessage::RoundSummary(_) => {
+
+            }
+            JsonMessage::EndOfGame(_) => {
+                run = false;
+            }
+            _ => {
+                panic!("C'est quoi cette merde que le serveur m'a envoyé");
+            }
+        }
+    }
     println!("{:?}", challenge);
 
 
