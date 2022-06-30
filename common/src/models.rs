@@ -22,6 +22,7 @@ pub enum JsonMessage {
     SubscribeResult(SubscribeResult),
     PublicLeaderBoard(Vec<PublicPlayer>),
     Challenge(Challenge),
+    ChallengeResult(ChallengeResult),
     RoundSummary(RoundSummary),
     EndOfGame(EndOfGame),
 }
@@ -91,5 +92,5 @@ pub struct RoundSummary {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct EndOfGame {
-    leader_board: PublicLeaderBoard,
+    leader_board: Vec<PublicPlayer>,
 }

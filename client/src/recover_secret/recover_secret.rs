@@ -1,4 +1,4 @@
-use common::challenge::Challenge;
+use common::challenge::IChallenge;
 
 pub struct RecoverSecretInput {
     pub letters: String,
@@ -14,7 +14,7 @@ pub struct RecoverSecret {
     pub output: RecoverSecretOutput,
 }
 
-impl Challenge for RecoverSecret {
+impl IChallenge for RecoverSecret {
     type Input = RecoverSecretInput;
     type Output = RecoverSecretOutput;
     fn name() -> String {

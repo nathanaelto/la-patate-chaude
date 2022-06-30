@@ -1,4 +1,4 @@
-pub trait Challenge {
+pub trait IChallenge {
     /// Données en entrée du challenge
     type Input;
     /// Données en sortie du challenge
