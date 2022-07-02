@@ -38,40 +38,25 @@ impl IChallenge for MD5HashCash {
     }
 
     fn solve(&self) -> Self::Output {
-        // Trouver seed telle que MD5 de seed + message égal à hashcode.
-        // Il faut aussi trouver le hashcode ... de ses morts
-
-        // Avec hashcode comprenant X bits à 0 où X supérieur ou égal à complexity.
-
-        // Askip c'est le nombre de bit à 0 en partant de la gauche qu'il faut compter.
         let message = self.input.message.clone();
-        let checker : Md5Checker = Md5Checker::new();
 
-        //entier de 64 bits
         let mut seed: u64 = 0;
-        let mut found = false;
-        let mut output: MD5HashCashOutput = MD5HashCashOutput { seed, hashcode: "".to_string() };
-        while !found {
-            //formater seed pour qu'il soit en hexa sur 32: println!("{:#01x}", seed);
+        let mut output: MD5HashCashOutput;
+        loop {
             let seed_str = format!("{:016X}", seed);
             let hashcode  = compute(seed_str + &message);
             let md5 = format!("{:032X}", hashcode);
-            let mut nb_bytes_to0 = 0;
-            for letter in md5.chars() {
-                let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
-                nb_bytes_to0 += nb_zero;
 
-                if nb_zero < 4 {
-                    break;
-                }
-            }
-
-            if nb_bytes_to0 >= self.input.complexity {
-                output = MD5HashCashOutput {
-                    seed,
-                    hashcode: md5
-                };
-                found = true;
+            output = MD5HashCashOutput {
+                seed,
+                hashcode: md5.clone()
+            };
+            if self.verify(MD5HashCashOutput {
+                seed,
+                hashcode: md5
+            }) {
+                println!("SEED : {}", seed);
+                break;
             }
 
             seed +=1;
@@ -80,6 +65,17 @@ impl IChallenge for MD5HashCash {
     }
 
     fn verify(&self, answer: Self::Output) -> bool {
-        todo!()
+        let checker : Md5Checker = Md5Checker::new();
+        let md5 = answer.hashcode.clone();
+        let mut nb_bytes_to0 = 0;
+        for letter in md5.chars() {
+            let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
+            nb_bytes_to0 += nb_zero;
+
+            if nb_zero < 4 {
+                break;
+            }
+        }
+        return nb_bytes_to0 >= self.input.complexity;
     }
 }
