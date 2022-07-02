@@ -1,3 +1,4 @@
+use std::ops::ControlFlow;
 use serde::{Deserialize, Serialize};
 use md5::compute;
 use crate::challenge::IChallenge;
@@ -68,14 +69,26 @@ impl IChallenge for MD5HashCash {
         let checker : Md5Checker = Md5Checker::new();
         let md5 = answer.hashcode.clone();
         let mut nb_bytes_to0 = 0;
-        for letter in md5.chars() {
-            let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
-            nb_bytes_to0 += nb_zero;
+        let chars: Vec<char> = md5.chars().collect();
 
-            if nb_zero < 4 {
-                break;
-            }
-        }
+        chars
+            .iter()
+            .for_each(|letter| {
+                let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
+                nb_bytes_to0 += nb_zero;
+
+                if nb_zero < 4 {
+                   return;
+                }
+            });
+        // for letter in md5.chars() {
+        //     let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
+        //     nb_bytes_to0 += nb_zero;
+        //
+        //     if nb_zero < 4 {
+        //         break;
+        //     }
+        // }
         return nb_bytes_to0 >= self.input.complexity;
     }
 }
