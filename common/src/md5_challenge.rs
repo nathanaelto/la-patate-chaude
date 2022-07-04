@@ -116,4 +116,25 @@ impl IChallenge for MD5HashCash {
     }
 }
 
+#[test]
+fn test_MD5HashCash_verify(){
+    let md5hash_cash_input: MD5HashCashInput = MD5HashCashInput{
+        complexity: 9,
+        message: "hello".to_string()
+    };
+    let md5hash_cash: MD5HashCash = MD5HashCash::new(md5hash_cash_input);
+    let md5hash_cash_output: MD5HashCashOutput = md5hash_cash.solve();
+    let result : bool = md5hash_cash.verify(md5hash_cash_output);
+    assert_eq!(result, true);
+}
+
+#[test]
+fn test_MD5HashCash_solve(){
+    todo!();
+}
+
+#[test]
+fn test_is_valid_hexa(){
+    todo!();
+}
 
