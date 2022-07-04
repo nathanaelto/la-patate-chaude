@@ -71,7 +71,7 @@ fn main() {
                         tcp_client.send_json_message(
                             &response
                         );
-                        println!("\n-- Challenge resolve \n--");
+                        // println!("\n-- Challenge resolve \n--");
                         println!("{:?}", response);
                     }
 
@@ -84,8 +84,7 @@ fn main() {
                 // println!("round_summary");
             }
             JsonMessage::PublicLeaderBoard(board) => {
-                // println!("{:?}", board);
-                println!("board");
+                println!("{:?}", board);
             }
             JsonMessage::EndOfGame(_) => {
                 println!("{:?}", record);
