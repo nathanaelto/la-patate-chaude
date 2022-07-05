@@ -1,5 +1,4 @@
 use std::fmt::Debug;
-use std::ops::{ControlFlow};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use md5::compute;
@@ -28,7 +27,7 @@ pub struct MD5HashCash {
     pub output: MD5HashCashOutput,
 }
 
-fn is_valide_hexa(hex: String, expected_dif: u32) -> bool {
+fn is_valid_hash(hex: String, expected_dif: u32) -> bool {
     let decimal: u128;
     if let Ok(decimal_from_hex) = u128::from_str_radix(&*hex, 16) {
         decimal = decimal_from_hex
@@ -100,7 +99,7 @@ impl IChallenge for MD5HashCash {
                         continue;
                     }
 
-                    let is_valid = is_valide_hexa(
+                    let is_valid = is_valid_hash(
                         hashcode.clone(),
                         *locked_complexity
                     );
@@ -145,30 +144,15 @@ impl IChallenge for MD5HashCash {
     fn verify(&self, answer: MD5HashCashOutput) -> bool {
         let md5 = answer.hashcode.clone();
 
-        is_valide_hexa(md5, self.input.complexity)
-        // let mut nb_bytes_to0 = 0;
-        // let chars: Vec<char> = md5.chars().collect();
-        //
-        // chars
-        //     .iter()
-        //     .try_for_each(|letter| {
-        //         let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
-        //         nb_bytes_to0 += nb_zero;
-        //
-        //         if nb_zero < 4 {
-        //             return ControlFlow::Break(letter)
-        //         }
-        //         ControlFlow::Continue(())
-        //     });
-        // return nb_bytes_to0 >= self.input.complexity;
+        is_valid_hash(md5, self.input.complexity)
     }
 }
 
 #[test]
-fn test_MD5HashCash_verify(){
+fn test_md5hash_cash_solve(){
     let md5hash_cash_input: MD5HashCashInput = MD5HashCashInput{
         complexity: 9,
-        message: "hello".to_string()
+        message: String::from("hello")
     };
     let md5hash_cash: MD5HashCash = MD5HashCash::new(md5hash_cash_input);
     let md5hash_cash_output: MD5HashCashOutput = md5hash_cash.solve();
@@ -177,12 +161,22 @@ fn test_MD5HashCash_verify(){
 }
 
 #[test]
-fn test_MD5HashCash_solve(){
-    todo!();
+fn test_md5hash_cash_verify(){
+    let md5_hash_cash_input: MD5HashCashInput = MD5HashCashInput{
+        complexity: 9,
+        message: String::from("hello")
+    };
+    let md5_hash_cash = MD5HashCash::new(md5_hash_cash_input);
+    let result = md5_hash_cash.verify(MD5HashCashOutput {
+        seed: 844,
+        hashcode: String::from("00441745D9BDF8E5D3C7872AC9DBB2C3")
+    });
+    assert_eq!(result, true);
 }
 
 #[test]
-fn test_is_valid_hexa(){
-    todo!();
+fn test_is_valid_hash(){
+    let result = is_valid_hash(String::from("00441745D9BDF8E5D3C7872AC9DBB2C3"), 9);
+    assert_eq!(result, true);
 }
 
