@@ -33,3 +33,13 @@ impl Md5Checker {
         *self.map.get(&key).unwrap()
     }
 }
+
+#[test]
+fn test_get_bits_to_zero(){
+    let checker : Md5Checker = Md5Checker::new();
+    let result1 : u32 = checker.get_bits_to_zero('F'.to_string());
+    let result2 : u32 = checker.get_bits_to_zero('0'.to_string());
+
+    assert_eq!(result1, 0);
+    assert_eq!(result2, 4)
+}
