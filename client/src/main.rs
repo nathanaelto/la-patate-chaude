@@ -1,3 +1,4 @@
+use rand::distributions::Alphanumeric;
 use rand::Rng;
 use common::challenge::IChallenge;
 use common::md5_challenge::{MD5HashCash, MD5HashCashOutput};
@@ -8,8 +9,22 @@ mod recover_secret;
 mod tcp_client;
 
 fn main() {
-
-    let player = std::env::args().nth(1).unwrap();
+    let player: String;
+    let name_input = std::env::args().nth(1);
+    match name_input {
+        None => {
+            //Génère un nom aléatoire pour le joueur
+            player = rand::thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(7)
+                .map(char::from)
+                .collect();
+        }
+        Some(name) => {
+            player = name;
+        }
+    }
+    println!("Player's name is {:?}", player);
 
     let mut tcp_client = TcpClient::new();
 
@@ -17,13 +32,15 @@ fn main() {
 
     println!("-- Hello --");
     let hello = JsonMessage::Hello;
-    let message: JsonMessage = tcp_client.send_and_await_json_message(&hello);
+    tcp_client.send_and_await_json_message(&hello);
+    // let message: JsonMessage = tcp_client.send_and_await_json_message(&hello);
     // println!("{:?}", message);
 
     println!("-- Subscribe --");
     let name = String::from(player.clone());
     let subscribe = JsonMessage::Subscribe(Subscribe {name});
-    let subscribe_response: JsonMessage = tcp_client.send_and_await_json_message(&subscribe);
+    // let subscribe_response: JsonMessage = tcp_client.send_and_await_json_message(&subscribe);
+    tcp_client.send_and_await_json_message(&subscribe);
     // println!("{:?}", subscribe_response);
 
     println!("-- Await PlayerBoard --");
@@ -40,8 +57,6 @@ fn main() {
 
     println!("{:?}", players);
 
-    let mut rng = rand::thread_rng();
-
     println!("-- Await Challenge or RoundSummary --");
 
     loop {
@@ -49,12 +64,12 @@ fn main() {
 
         match record {
             JsonMessage::Challenge(challenge) => {
-                let mut target_index = rng.gen_range(0..players.len());
-                let mut target: &PublicPlayer = players.get(target_index).unwrap();
+                let mut target: &PublicPlayer = get_target(players);
+
                 while target.name == player {
-                    target_index = rng.gen_range(0..players.len());
-                    target = players.get(target_index).unwrap();
+                    target = get_target(players);
                 }
+
                 match challenge {
 
                     Challenge::MD5HashCash(input) => {
@@ -64,10 +79,12 @@ fn main() {
                         println!("{:?}", input);
                         let md5_challenge: MD5HashCash = MD5HashCash::new(input);
                         let md5_solution: MD5HashCashOutput = md5_challenge.solve();
-                        let response: JsonMessage = JsonMessage::ChallengeResult(ChallengeResult {
-                            next_target: target.name.clone(),
-                            answer: ChallengeAnswer::MD5HashCash(md5_solution)
-                        });
+                        let response: JsonMessage = JsonMessage::ChallengeResult(
+                            ChallengeResult {
+                                next_target: target.name.clone(),
+                                answer: ChallengeAnswer::MD5HashCash(md5_solution)
+                            }
+                        );
                         tcp_client.send_json_message(
                             &response
                         );
@@ -76,7 +93,6 @@ fn main() {
                     }
 
                 }
-
 
             }
             JsonMessage::RoundSummary(round_summary) => {
@@ -95,4 +111,23 @@ fn main() {
             }
         }
     }
+}
+
+fn get_target(players: &Vec<PublicPlayer>) -> &PublicPlayer {
+    let mut rng = rand::thread_rng();
+    let target_index = rng.gen_range(0..players.len());
+    let target: &PublicPlayer;
+
+    match players.get(target_index) {
+        None => {
+            panic!("Le joueur à disparu !?");
+        }
+        Some(x) => {
+            target = x;
+        }
+    }
+
+
+    return target; //Option<PublicPlayer>
+
 }
