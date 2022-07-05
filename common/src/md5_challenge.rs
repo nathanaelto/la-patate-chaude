@@ -6,7 +6,6 @@ use md5::compute;
 use serde::{Deserialize, Serialize};
 
 use crate::challenge::IChallenge;
-use crate::md5_checker::Md5Checker;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MD5HashCashInput {
@@ -54,7 +53,7 @@ impl IChallenge for MD5HashCash {
         let mutex_for_result = Arc::new((Mutex::new(false), Mutex::new(MD5HashCashOutput { seed: 0, hashcode: "".to_string() })));
         let mutex_complexity = Arc::new(Mutex::new(self.input.complexity));
         let max_seed : u64 = 18_446_744_073_709_551_615;
-        let nb_thread: u64 = 100;
+        let nb_thread: u64 = 16;
         let loop_of_thread = max_seed / nb_thread;
         let mut threads = Vec::new();
 
@@ -96,23 +95,24 @@ impl IChallenge for MD5HashCash {
     }
 
     fn verify(&self, answer: MD5HashCashOutput) -> bool {
-        let checker : Md5Checker = Md5Checker::new();
         let md5 = answer.hashcode.clone();
-        let mut nb_bytes_to0 = 0;
-        let chars: Vec<char> = md5.chars().collect();
 
-        chars
-            .iter()
-            .try_for_each(|letter| {
-                let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
-                nb_bytes_to0 += nb_zero;
-
-                if nb_zero < 4 {
-                    return ControlFlow::Break(letter)
-                }
-                ControlFlow::Continue(())
-            });
-        return nb_bytes_to0 >= self.input.complexity;
+        is_valide_hexa(md5, self.input.complexity)
+        // let mut nb_bytes_to0 = 0;
+        // let chars: Vec<char> = md5.chars().collect();
+        //
+        // chars
+        //     .iter()
+        //     .try_for_each(|letter| {
+        //         let nb_zero: u32 = checker.get_bits_to_zero(letter.to_string()) ; //tester lettre avec checker
+        //         nb_bytes_to0 += nb_zero;
+        //
+        //         if nb_zero < 4 {
+        //             return ControlFlow::Break(letter)
+        //         }
+        //         ControlFlow::Continue(())
+        //     });
+        // return nb_bytes_to0 >= self.input.complexity;
     }
 }
 

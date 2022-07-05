@@ -1,3 +1,5 @@
+use core::fmt;
+use std::fmt::Formatter;
 use serde::{Deserialize, Serialize};
 use crate::md5_challenge::{MD5HashCashInput, MD5HashCashOutput};
 
@@ -39,6 +41,8 @@ pub enum SubscribeError {
     InvalidName,
 }
 
+// #[derive(Serialize, Deserialize, Debug, Display)]
+// #[display(fmt = "Player : {} - {}\nScore : {}\nStep : {}\nIsActive : {}\nTotal time used : {}\n", name, stream_id, score, steps, is_active, total_used_time)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PublicPlayer {
     pub name: String,
@@ -47,6 +51,16 @@ pub struct PublicPlayer {
     pub steps: u32,
     pub is_active: bool,
     pub total_used_time: f64,
+}
+
+impl fmt::Display for PublicPlayer {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Player : {} - {}\nScore : {}\nStep : {}\nIsActive : {}\nTotal time used : {}\n",
+            self.name, self.stream_id, self.score, self.steps, self.is_active, self.total_used_time
+        )
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
