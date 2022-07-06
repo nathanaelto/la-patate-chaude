@@ -1,7 +1,7 @@
 use rand::distributions::Alphanumeric;
 use rand::Rng;
-use common::challenge::IChallenge;
-use common::md5_challenge::{MD5HashCash, MD5HashCashOutput};
+use common::challenge::challenge::IChallenge;
+use common::challenge::md5_challenge::{MD5HashCash, MD5HashCashOutput};
 use common::models::{Challenge, ChallengeAnswer, ChallengeResult, JsonMessage, PublicPlayer, Subscribe};
 use crate::tcp_client::tpc_client::TcpClient;
 

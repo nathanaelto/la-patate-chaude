@@ -1,4 +1,4 @@
-use common::challenge::IChallenge;
+use common::challenge::challenge::IChallenge;
 
 pub struct RecoverSecretInput {
     pub word_count: usize,

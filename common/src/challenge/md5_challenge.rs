@@ -3,8 +3,8 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use md5::compute;
 use serde::{Deserialize, Serialize};
+use crate::challenge::challenge::IChallenge;
 
-use crate::challenge::IChallenge;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MD5HashCashInput {

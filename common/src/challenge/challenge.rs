@@ -1,3 +1,4 @@
+
 pub trait IChallenge {
     /// Données en entrée du challenge
     type Input;

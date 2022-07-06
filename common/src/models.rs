@@ -1,7 +1,7 @@
 use core::fmt;
 use std::fmt::Formatter;
 use serde::{Deserialize, Serialize};
-use crate::md5_challenge::{MD5HashCashInput, MD5HashCashOutput};
+use crate::challenge::md5_challenge::{MD5HashCashInput, MD5HashCashOutput};
 
 #[derive(Serialize, Debug)]
 pub struct Hello {}
