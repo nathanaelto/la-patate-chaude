@@ -5,7 +5,6 @@ use common::challenge::md5_challenge::{MD5HashCash, MD5HashCashOutput};
 use common::models::{Challenge, ChallengeAnswer, ChallengeResult, JsonMessage, PublicPlayer, Subscribe};
 use crate::tcp_client::tpc_client::TcpClient;
 
-mod recover_secret;
 mod tcp_client;
 
 fn main() {
